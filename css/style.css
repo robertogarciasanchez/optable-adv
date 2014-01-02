@@ -1,0 +1,18 @@
+#container{ margin:0 auto;
+            width:800px;
+        }
+#canvas  {  border: 1px black solid;
+            display: block;
+            background-color:white;
+        }
+ 
+#header {   height:85px;
+            background:url("../images/logo.png") no-repeat;
+        }
+        
+#footer {   font-size:0.85em;
+            margin: 4px 0 0 ;
+        }
+        
+body {   background:url("../images/bgOPT.png"); 
+        }
