@@ -14,5 +14,5 @@
             margin: 4px 0 0 ;
         }
         
-body {   background:url("../images/bgOPT.png"); 
+body {   background: linear-gradient(top, blue, white); 
         }

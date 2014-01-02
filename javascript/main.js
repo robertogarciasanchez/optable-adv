@@ -11,15 +11,16 @@ function init() {
         
        
         //adding the background image
-        var text = new createjs.Text ("Dos + dos", "36px Arial", "#666");
+       //var text = new createjs.Text ("Dos + dos", "36px Arial", "#666");
        
         var background = new createjs.Bitmap("./images/background.jpg");
         stage.addChild(background);
         
-        var logo = new createjs.Bitmap("./images/logo.png");
+        var logo = new createjs.Bitmap("./images/logoBig.png");
+        
         stage.addChild(logo);
         
-        stage.addChild(text);
+        //stage.addChild(text);
         //updating the stage
         stage.update();
         
