@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 function init() {
         //Variables
         var score = 0;
@@ -17,26 +25,21 @@ function init() {
         stage.addChild(background);
         
         var logo = new createjs.Bitmap("./images/logoBig.png");
+        logo.x=230;
+        logo.y=140;
         
         stage.addChild(logo);
+        
         
         //stage.addChild(text);
         //updating the stage
         stage.update();
         
+        var btn1 =stage.addChild(new Button("Jugar","#F00"));
+        btn1.x=300;
+        btn1.y=350;
         
-        var smarty = new Button();
-        smarty.x = 205;
-        smarty.y = 45;
+        createjs.Ticker.addEventListener("tick",stage);
+        createjs.Ticker.addEventListener("click",stage);        
 
-        //include each state
-        smarty.up( new Bitmap( 'assets/_up.png') );
-        smarty.over( new Bitmap( 'assets/_over.png') );
-        smarty.down( new Bitmap( 'assets/_down.png') );
-        
-        //handle each mouse action
-        smarty.press = function(event){ log( 'smarty press' ); };
-        smarty.rollOver = function(event){ log( 'smarty rollOver' ); };
-        smarty.rollOut = function(event){ log( 'smarty rollOut' ); };
-        smarty.release = function(event){ log( 'smarty release' ); };
 }
