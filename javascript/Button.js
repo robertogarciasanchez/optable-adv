@@ -30,5 +30,6 @@ p.initialize = function(label, color) {
 	
 	this.addChild(this.background,text);
 }
+
 window.Button = Button;
 }());
