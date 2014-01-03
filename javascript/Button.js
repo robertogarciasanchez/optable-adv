@@ -15,7 +15,7 @@ p.initialize = function(label, color) {
 	this.label = label;
 	if (!color) { color = "#CCC"; }
 	
-	var text = new createjs.Text(label, "20px Arial", "#000");
+	var text = new createjs.Text(label, "18px Arial", "#000");
 	text.textBaseline = "top";
 	text.textAlign = "center";
 	
@@ -30,14 +30,5 @@ p.initialize = function(label, color) {
 	
 	this.addChild(this.background,text);
 }
-
-p.onClick = function() {
-	alert("You clicked on a button: "+this.label);
-}
-
-p.onTick = function() {
-	this.alpha = Math.cos(this.count++*0.1)*0.4+0.6;
-}
-
 window.Button = Button;
 }());
