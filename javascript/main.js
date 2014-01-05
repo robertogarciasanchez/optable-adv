@@ -80,9 +80,6 @@ function alpha(){
 }
 
 function infoBox() {
-        var file;
-        var fileLength;
-        var content="";
         box= stage.addChild(new createjs.Container());        
         box.name = "box";
         box.x=51;
@@ -97,15 +94,11 @@ function infoBox() {
         switch (this.label) {
                 case "How to...":
                         box.img="./images/about.png";
-                        file = fopen(getScriptPath("./media/howto.txt"), 0);
-                        fileLength = file.length;
-                        content = fread(file, fileLength);
+                        
                         break;
                 case "About":
                         box.img="./images/about.png";
-                        file = fopen(getScriptPath("./media/about.txt"), 0);
-                        fileLength = file.length;
-                        content = fread(file, fileLength);
+                
                         break;
                 default:
                         box.img="./images/about.png";
@@ -118,7 +111,7 @@ function infoBox() {
         title.x = width/2-100;
 	title.y = 30;
         
-        var text = box.addChild(new createjs.Text(content, "15px Arial", "#000"));
+        var text = box.addChild(new createjs.Text(this.txt, "15px Arial", "#000"));
         text.x = width/2-100;
 	text.y = 70;
         
@@ -170,4 +163,12 @@ function music(){
                 music1= createjs.Sound.play(event.id, createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
                 createjs.Sound.setMute(true);//OJO QUITAR
         }
+}
+
+function tick() {
+	// this set makes it so the stage only re-renders when an event handler indicates a change has happened.
+  // if (update) {
+     update = false; // only update once
+     stage.update();
+  //}
 }
