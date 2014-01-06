@@ -9,6 +9,7 @@ var layer1;
 var layer2;
 var formDOMElement;
 var registered= false;
+var socket;
         
 function init() {     
         //initialize the stage
@@ -188,12 +189,42 @@ function tick() {
 
 function checkUser() {
         alert("Comprobar usuario");
+        document.getElementById('status').innerHTML ="Browser has connected to the app server";
+        try
+        {
+                if (!socket) {
+                        socket = io.connect('http://192.168.1.111:3000/');
+                }
+                socket.on("connect",function(){
+                document.getElementById('status').innerHTML ="Browser has connected to the app server";
+                socket.emit('login', document.getElementById('user').value, document.getElementById('password').value);
+
+            });
+            socket.on('return', function (data) {
+                document.getElementById('status').innerHTML = 'Welcome '+ data;
+            });
+            
+        }
+        catch(err)
+        {
+            document.getElementById('status').innerHTML = err.message;
+        }
+        
+        
         
         //COMPROBAR EN MYSQL
-        formDOMElement.visible=false;
-        registered=true;
-        startGame();
+        //formDOMElement.visible=false;
+        //registered=true;
+        //startGame();
 }
+
+
+
+
+function connect() {
+
+        
+    }
 
 function playGuest() {
         formDOMElement.visible=false;

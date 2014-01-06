@@ -23,13 +23,13 @@ db.connect(function(err){
               if (err) throw err;
               if (results[0]) {
                 socket.emit('return','true');
-                console.log(results[0]);
+                console.log(results[0]+"VERDADERO");
               }
               else{
                 socket.emit('return','false');
-                console.log(results[0]);
+                console.log("FALSO");
               }
-              db.end();
+              db.close();
             });
 
         });
