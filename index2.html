@@ -1,0 +1,33 @@
+<html>
+    <title>WebSocket Client Demo [socket.io]</title>
+    <script src="http://192.168.1.111:3000/socket.io/socket.io.js"></script>
+    <script>
+    function connect() {
+
+        try
+        {
+            var socket = io.connect('http://192.168.1.111:3000/');
+            socket.on("connect",function(){
+                document.getElementById('status').innerHTML ="Browser has connected to the app server";
+                socket.emit('login', document.getElementById('txtUser').value, document.getElementById('txtPass').value);
+
+            });
+            socket.on('return', function (data) {
+                document.getElementById('status').innerHTML = 'Welcome '+ data;
+            });
+        }
+        catch(err)
+        {
+            document.getElementById('status').innerHTML = err.message;
+        }
+    }
+    </script>
+    <body>
+        <h1>WebSocket Client Demo</h1>
+        <div><p id="status">Enter user and password to Log-In</p></div>
+        <label>User :</label>
+        <input id="txtUser" type="text" maxlength="10" />
+        <label>Password :</label>
+        <input id="txtPass" type="text" maxlength="10" />
+        <button id="connect" onClick='connect()'/>Log-In</button>
+    </body>

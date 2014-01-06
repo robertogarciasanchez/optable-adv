@@ -8,10 +8,13 @@
   
        <!-- EaselJS para trabajar con el canvas-->
        <script src="./lib/easeljs-0.7.1.min.js"></script>
-       
        <script src="./lib/soundjs-0.5.2.min.js"></script>
+       <script src="./lib/tweenjs-0.5.1.min.js"></script>
+	
        
        <script src="./javascript/Button.js"></script>
+       
+       
   
        <!-- Programa principal -->
        <script src="javascript/main.js"></script>
@@ -19,9 +22,24 @@
 
     <body id="fondo" onload="init();">
 	<div id="container">
+		<div id="myform" >
+		    <div id="registered" >
+			<h3>Registered players</h3>
+			<input type="text" id="user" value="user"/> <br><br>
+			<input type="password"  id="password" value="password"/>
+			<p><input type="button" value="Enter" onclick="checkUser()"/></p>
+		    </div>
+		    <div id="guest" >
+			<h3>Guests players</h3>
+			<p><input type="button" value="Play" onclick="playGuest()"/></p>
+		    </div>
+		</div>
+		
 		<div id="header"></div>
 		<canvas id="canvas" width="798" height="500"></canvas>
 		<div id="footer">Roberto García Sánchez</div>
+		
+		
 	</div>
     </body>
 </html>

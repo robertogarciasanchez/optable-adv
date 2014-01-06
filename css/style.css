@@ -25,3 +25,21 @@ body    {   height: 100%;
             background: -moz-linear-gradient(top, cornflowerblue,white);
             background: linear-gradient(top, cornflowerblue, white);
         }
+
+#myform{
+    alignment-adjust: center;
+    width: 400px;
+  
+    opacity:0;
+    
+}
+
+#guest, #registered{
+    font-size: 0.8em;
+    color: #ffffff;
+    background-color: #0066DD;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    float: left;
+}
