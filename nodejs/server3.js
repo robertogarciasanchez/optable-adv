@@ -16,22 +16,19 @@ db.connect(function(err){
         
     io.sockets.on('connection', function (socket) {
         socket.on('login', function(usr, pass){
-            
-            //db.query('USE '+ database);
-
-            db.query('SELECT nombre FROM '+ table +' WHERE nombre = "'+usr+'" AND password = "'+pass+'"', function(err, results) {
-              if (err) throw err;
-              if (results[0]) {
-                socket.emit('return','true');
-                console.log(results[0]+"VERDADERO");
-              }
-              else{
-                socket.emit('return','false');
-                console.log("FALSO");
-              }
-              db.close();
-            });
-
+          console.log("CONECTADO");
+          db.query('SELECT nombre FROM '+ table +' WHERE nombre = "'+usr+'" AND password = "'+pass+'"', function(err, results) {
+            if (err) throw err;
+            if (results[0]) {
+              socket.emit('return','true');
+              console.log(results[0]+"VERDADERO");
+            }
+            else{
+              socket.emit('return','false');
+              console.log("FALSO");
+            }
+            db.end();
+          });
         });
         socket.on('disconnect', function(){
             console.log('Server has disconnected');
