@@ -10,6 +10,7 @@ var layer2;
 var formDOMElement;
 var registered= false;
 var socket;
+
         
 function init() {     
         //initialize the stage
@@ -19,7 +20,7 @@ function init() {
         gameLayer();
         music();
         soundChange();        
-        createjs.Ticker.on("tick", stage); 
+        createjs.Ticker.on("tick", tick); 
 }
 
 function mainLayer() {
@@ -29,8 +30,9 @@ function mainLayer() {
         layer1.name = "layer1";
         
         var logo = layer1.addChild(new createjs.Bitmap("./images/logoBig.png"));
-        logo.x=70;
+        logo.x=-570;
         logo.y=90;
+        createjs.Tween.get(logo).to({alpha:1, x:70},1500,createjs.Ease.bounceOut);
         
         var btn1 =layer1.addChild(new Button("Play","#4969e1"));
         btn1.x=canvas.width/2;
@@ -54,14 +56,7 @@ function mainLayer() {
         
         form = document.getElementById("myform");
         formDOMElement = new createjs.DOMElement(form);
-        //move it's rotation center at the center of the form
-        formDOMElement.regX = form.offsetWidth*0.5;
-        formDOMElement.regY = form.offsetHeight*0.5;
-        //move the form above the screen
-        formDOMElement.x = canvas.width * 0.5;
-        formDOMElement.y =  300;
         formDOMElement.visible=false;
-        
         stage.addChild(formDOMElement);
 }
 
@@ -78,15 +73,47 @@ function gameLayer(){
         btn3.txt="Hola2";
         btn3.on("click",function(){layer2.visible=false;layer1.visible=true;});
         
-        var log = layer1.addChild(new createjs.Text ("Probando", "14px Arial", "#FFF"));
-        log.x=canvas.width-100;
-        log.y=15;
+        var panel = layer2.addChild(new createjs.Container());
+        panel.name = "panel";
+        panel.width=420;
+        panel.height=50;
+        panel.x=canvas.width-420;
+        
+        var background = panel.addChild(new createjs.Shape());
+	background.graphics.beginFill("blue").drawRect(0,0,panel.width,panel.height,10);
+             
+        var life;
+        for (var i=0;i<3;i++) {
+                life = panel.addChild(new createjs.Bitmap("./images/heart.png"));
+                life.name="life"+i;
+                life.x=10+(40*i);
+                life.y=8;
+        }
+        
+        var log = panel.addChild(new createjs.Text ("00000", "30px Arial", "#FFF"));
+        log.x= panel.width-110;
+        log.y=7;
+        
+        var clock = panel.addChild(new createjs.Bitmap("./images/clock.png"));
+        clock.name="clock";
+        clock.x=150;
+        clock.y=6;
+        
+        
+        
 }
 
 function checkGame() {
         layer1.visible=false;
         formDOMElement.visible=true;
-        //Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:720},2000,Ease.cubicOut);
+        formDOMElement.regX = form.offsetWidth*0.5;
+        formDOMElement.regY = form.offsetHeight*0.5;
+        //move the form above the screen
+        formDOMElement.x = canvas.width * 0.5;
+        formDOMElement.y =  -150;
+        formDOMElement.rotation=-360;
+        formDOMElement.alpha=0;
+        createjs.Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:360},1000,createjs.Ease.cubicOut);
 }
 
 function alpha(){
@@ -138,6 +165,7 @@ function infoBox() {
         stage.update();
 }
 
+
 function closeBox(){
         stage.removeChild(stage.getChildByName(this.name));
 }
@@ -181,10 +209,10 @@ function music(){
 
 function tick() {
 	// this set makes it so the stage only re-renders when an event handler indicates a change has happened.
-        if (update) {
+       // if (update) {
                 update = false; // only update once
                 stage.update();
-        }
+       // }
 }
 
 function checkUser() {
@@ -211,20 +239,11 @@ function checkUser() {
         }
         
         
-        
         //COMPROBAR EN MYSQL
         //formDOMElement.visible=false;
         //registered=true;
         //startGame();
 }
-
-
-
-
-function connect() {
-
-        
-    }
 
 function playGuest() {
         formDOMElement.visible=false;
@@ -234,7 +253,7 @@ function playGuest() {
 
 function startGame() {
         layer2.visible=true;
-        alert("JUGANDO");//code
+        //alert("JUGANDO");//code
         createjs.Sound.stop();
         createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 }
