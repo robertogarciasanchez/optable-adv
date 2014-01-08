@@ -8,8 +8,13 @@ var bg;
 var layer1;
 var layer2;
 var formDOMElement;
-var registered= false;
-var socket;
+var registered = false;
+
+//Variables Chronometer
+var chrono;
+var timercount = false;
+var timestart = null;
+var timeend;
 
         
 function init() {     
@@ -71,7 +76,9 @@ function gameLayer(){
         btn3.x=canvas.width/2;
         btn3.y=400;
         btn3.txt="Hola2";
-        btn3.on("click",function(){layer2.visible=false;layer1.visible=true;});
+        btn3.on("click",function(){
+                //layer2.visible=false;layer1.visible=true;
+                alert(updateChrono());});
         
         var panel = layer2.addChild(new createjs.Container());
         panel.name = "panel";
@@ -79,8 +86,8 @@ function gameLayer(){
         panel.height=50;
         panel.x=canvas.width-420;
         
-        var background = panel.addChild(new createjs.Shape());
-	background.graphics.beginFill("blue").drawRect(0,0,panel.width,panel.height,10);
+        //var background = panel.addChild(new createjs.Shape());
+	//background.graphics.beginFill("blue").drawRect(0,0,panel.width,panel.height,10);
              
         var life;
         for (var i=0;i<3;i++) {
@@ -90,16 +97,18 @@ function gameLayer(){
                 life.y=8;
         }
         
-        var log = panel.addChild(new createjs.Text ("00000", "30px Arial", "#FFF"));
-        log.x= panel.width-110;
-        log.y=7;
+        var log = panel.addChild(new createjs.Text ("0000", "28px Arial", "#FFF"));
+        log.x= panel.width-100;
+        log.y=9;
         
         var clock = panel.addChild(new createjs.Bitmap("./images/clock.png"));
         clock.name="clock";
-        clock.x=150;
-        clock.y=6;
+        clock.x=170;
+        clock.y=5;
         
-        
+        chrono = panel.addChild(new createjs.Text ("00:10", "26px Arial", "#FFF"));
+        chrono.x= 210;
+        chrono.y=10;
         
 }
 
@@ -220,9 +229,7 @@ function checkUser() {
         document.getElementById('status').innerHTML ="Browser has connected to the app server";
         try
         {
-                if (!socket) {
-                        socket = io.connect('http://192.168.1.111:3000/');
-                }
+                var socket = io.connect('http://192.168.1.111:3000/');
                 socket.on("connect",function(){
                 document.getElementById('status').innerHTML ="Browser has connected to the app server";
                 socket.emit('login', document.getElementById('user').value, document.getElementById('password').value);
@@ -256,4 +263,65 @@ function startGame() {
         //alert("JUGANDO");//code
         createjs.Sound.stop();
         createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
+        
+        startChrono();
+        chrono.on("tick",updateChrono);
+        //;
+}
+
+function startChrono(){
+    alert("HEllooow");
+        if(!timercount){
+                timestart   = new Date();
+                timercount = true;
+        }
+}
+
+function updateChrono() {
+        var time;
+        if(!timercount){
+                time="00:00";
+        }
+        else{
+                timeend = new Date();
+                var timedifference = timeend.getTime() - timestart.getTime();
+                timeend.setTime(timedifference);
+        }
+        chrono.text=(formatChrono(timeend,0));
+        return timeend;
+}
+
+function stopChrono() {
+    var total= updateChrono();
+    timercount=false;
+    timestart = null;
+    chrono.text=(total);
+    return total;
+}
+
+function formatChrono(t,milliseconds){
+        var time;
+        var minutes_passed = t.getMinutes();
+        if(minutes_passed < 10){
+                minutes_passed = "0" + minutes_passed;
+        }
+        var seconds_passed = t.getSeconds();
+        if(seconds_passed < 10){
+                seconds_passed = "0" + seconds_passed;
+        }
+        if (milliseconds) {
+                var milliseconds_passed = t.getMilliseconds();
+                if(milliseconds_passed < 10){
+                        milliseconds_passed = "00" + milliseconds_passed;
+                }
+                else if(milliseconds_passed < 100){
+                        milliseconds_passed = "0" + milliseconds_passed;
+                }
+                time = minutes_passed + ":" + seconds_passed + "." + milliseconds_passed;
+        }
+        else{
+                time = minutes_passed + ":" + seconds_passed;   
+        }
+        
+        return time;
 }
