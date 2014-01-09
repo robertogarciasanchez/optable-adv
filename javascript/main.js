@@ -85,8 +85,11 @@ function mainLayer() {
 }
 
 function main() {
+        layer2.visible=false;
         layer1.visible=true;
         formDOMElement.visible=false;
+        createjs.Sound.stop();
+        createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
 }
 
 function gameLayer(){  
@@ -95,14 +98,6 @@ function gameLayer(){
         layer2.visible=false;
         
         var background = layer2.addChild(new createjs.Bitmap("./images/bg1.png"));
-        
-        /*var btn3 =layer2.addChild(new Button("About","#4969e1"));
-        btn3.x=canvas.width/2;
-        btn3.y=400;
-        btn3.txt="Hola2";
-        btn3.on("click",function(){
-                //layer2.visible=false;layer1.visible=true;
-                alert(updateChrono());});*/
         
         var panel1 = layer2.addChild(new createjs.Container());
         panel1.name = "panel1";
@@ -121,17 +116,23 @@ function gameLayer(){
         }
         
         var log = panel1.addChild(new createjs.Text ("0000", "28px Arial", "#FFF"));
-        log.x= panel1.width-100;
+        log.x= panel1.width-130;
         log.y=9;
         
         var clock = panel1.addChild(new createjs.Bitmap("./images/clock.png"));
         clock.name="clock";
-        clock.x=170;
+        clock.x=160;
         clock.y=5;
         
-        chrono = panel1.addChild(new createjs.Text ("00:10", "26px Arial", "#FFF"));
-        chrono.x= 210;
+        chrono = panel1.addChild(new createjs.Text ("00:00", "26px Arial", "#FFF"));
+        chrono.x= 200;
         chrono.y=10;
+        
+        var exit = panel1.addChild(new createjs.Bitmap("./images/exit.png"));
+        exit.name="clock";
+        exit.x=panel1.width-40;
+        exit.y=5;
+        exit.on('click',endGame);
         
         
         var panel2 = layer2.addChild(new createjs.Container());
@@ -140,9 +141,12 @@ function gameLayer(){
         panel2.height=110;
         panel2.y=canvas.height-110;
         
-        var background = panel2.addChild(new createjs.Shape());
-	background.graphics.beginFill("blue").drawRect(0,0,panel2.width,panel2.height,10); 
+        var backgroundAction = panel2.addChild(new createjs.Shape());
+	backgroundAction.graphics.beginFill("blue").drawRect(0,0,panel2.width/2-5,panel2.height,10);
         
+        var backgroundText = panel2.addChild(new createjs.Shape());
+	backgroundText.graphics.beginFill("grey").drawRoundRect(panel2.width/2,0,panel2.width/2-5,panel2.height+10,10);
+        backgroundText.alpha=0.65;
 }
 
 function checkGame() {
@@ -351,5 +355,7 @@ function formatChrono(t,milliseconds){
 function endGame() {
         registered=false;
         score=0;
+        stopChrono();
+        main();
 }
 
