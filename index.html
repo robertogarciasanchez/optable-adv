@@ -13,25 +13,19 @@
 	<!-- Programa principal -->
 	<script src="./javascript/main.js"></script>
 	<script src="./javascript/button.js"></script>
-	<script src="./javascript/login.js"></script>
+	<script src="./javascript/queries.js"></script>
     </head>
 
     <body id="fondo" onload="init();">
 	<div id="container">
 		<div id="loginForm" >
 		    <div id="registered" >
-			<h3>Registered players</h3>
+			<div id="closelogin" onclick="main();"></div>
 			<input type="text" id="username" name="username" value="username"/> <br><br>
 			<input type="password"  id="password" name="password" value="password"/>
-			<p><input type="button" value="Enter" onclick="login()"/></p>
+			<div id="loginbt"></div>
 		    </div>
-		    <div id="guest" >
-			<h3>Guests players</h3>
-			<p><input type="button" value="Play" onclick="playGuest()"/></p>
-		    </div>
-		    <div id="msg" >
-			
-		    </div>
+		    <div id="msg" ></div>
 		</div>
 		
 		<div id="header"></div>

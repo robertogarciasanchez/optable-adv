@@ -28,16 +28,31 @@ body    {   height: 100%;
 
 #loginForm{
     alignment-adjust: center;
-    width: 400px;
-    opacity:0; 
-}
-
-#guest, #registered{
+    width: 240px;
+    opacity:0;
+    text-align: center;
     font-size: 0.8em;
     color: #ffffff;
     background-color: #0066DD;
-    padding: 10px;
-    margin: 10px;
-    text-align: center;
-    float: left;
+    padding: 10px 0 10px;
+    margin: 40px;
+    
+    border-radius: 15px;
+    opacity: 0;
 }
+
+#loginbt{
+    width:165px;
+    height: 50px;
+    background-image: url("../images/login.png");
+    margin:10px auto 0px;
+}
+
+#closelogin{
+    width:16px;
+    height: 16px;
+    background-image: url("../images/close.png");
+    margin-bottom: 10px;
+    margin-left:210px;
+}
+
