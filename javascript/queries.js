@@ -8,7 +8,7 @@ function login(){
         success: function(html){
             if(html=='1'){
                 $("#msg").html("You have logged");
-                $("#loginForm").fadeOut("normal");
+                formDOMElement.visible=false;
                 registered=true;
                 startGame();
             }
@@ -32,7 +32,7 @@ function showStatistics(){
         success: function(html){
             if(html=='1'){
                 $("#msg").html("You have logged");
-                $("#loginForm").fadeOut("normal");
+                formDOMElement.visible=false;
                 //MOSTRAR ESTADISTICA
             }
             else{
