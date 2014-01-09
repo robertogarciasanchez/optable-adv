@@ -19,7 +19,7 @@ var timeend;
         
 function init() {     
         //initialize the stage
-        canvas = document.getElementById("canvas");
+        canvas = $('#canvas').get(0);
         stage = new createjs.Stage(canvas);
         mainLayer();
         gameLayer();
@@ -59,7 +59,7 @@ function mainLayer() {
         btn3.on("click",infoBox);
         btn3.on("tick",alpha);
         
-        form = document.getElementById("myform");
+        form =$('#loginForm').get(0);
         formDOMElement = new createjs.DOMElement(form);
         formDOMElement.visible=false;
         stage.addChild(formDOMElement);
@@ -224,34 +224,6 @@ function tick() {
        // }
 }
 
-function checkUser() {
-        alert("Comprobar usuario");
-        document.getElementById('status').innerHTML ="Browser has connected to the app server";
-        try
-        {
-                var socket = io.connect('http://192.168.1.111:3000/');
-                socket.on("connect",function(){
-                document.getElementById('status').innerHTML ="Browser has connected to the app server";
-                socket.emit('login', document.getElementById('user').value, document.getElementById('password').value);
-
-            });
-            socket.on('return', function (data) {
-                document.getElementById('status').innerHTML = 'Welcome '+ data;
-            });
-            
-        }
-        catch(err)
-        {
-            document.getElementById('status').innerHTML = err.message;
-        }
-        
-        
-        //COMPROBAR EN MYSQL
-        //formDOMElement.visible=false;
-        //registered=true;
-        //startGame();
-}
-
 function playGuest() {
         formDOMElement.visible=false;
         registered=false;
@@ -322,6 +294,6 @@ function formatChrono(t,milliseconds){
         else{
                 time = minutes_passed + ":" + seconds_passed;   
         }
-        
         return time;
 }
+
