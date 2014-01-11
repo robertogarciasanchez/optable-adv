@@ -11,6 +11,8 @@ function login(){
                 formDOMElement.visible=false;
                 registered=true;
                 startGame();
+                $("#username").val('username');
+                $("#password").val('password');
             }
             else{
                 $("#msg").html("*Wrong username or password");
@@ -22,7 +24,7 @@ function login(){
     });
 }
 
-function showStatistics(){
+function statistics(){
     var username = $('#username').val();
     var password=$('#password').val();
     $.ajax({
@@ -33,6 +35,8 @@ function showStatistics(){
             if(html=='1'){
                 $("#msg").html("You have logged");
                 formDOMElement.visible=false;
+                $("#username").val('username');
+                $("#password").val('password');
                 //MOSTRAR ESTADISTICA
             }
             else{

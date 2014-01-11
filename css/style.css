@@ -41,7 +41,7 @@ body    {   height: 100%;
     opacity: 0;
 }
 
-#loginbt{
+#botton{
     width:165px;
     height: 50px;
     background-image: url("../images/login.png");

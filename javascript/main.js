@@ -38,7 +38,7 @@ function mainLayer() {
         var btn1 = layer1.addChild(new createjs.Bitmap("./images/play.png"));
         btn1.x=canvas.width/2-65;
         btn1.y=255;
-        btn1.on("click",checkGame);
+        btn1.on("click",checkUser);
         btn1.on("mouseover",alpha);
         btn1.on("mouseout",noalpha);
         
@@ -61,7 +61,7 @@ function mainLayer() {
         btn4.x=canvas.width/2-65;
         btn4.y=btn3.y+43;
         btn4.txt="sta";
-        btn4.on("click",statistics);
+        btn4.on("click",showStatistics);
         btn4.on("mouseover",alpha);
         btn4.on("mouseout",noalpha);  
         
@@ -141,16 +141,23 @@ function gameLayer(){
         panel2.height=110;
         panel2.y=canvas.height-110;
         
-        var backgroundAction = panel2.addChild(new createjs.Shape());
-	backgroundAction.graphics.beginFill("blue").drawRect(0,0,panel2.width/2-5,panel2.height,10);
-        
         var backgroundText = panel2.addChild(new createjs.Shape());
-	backgroundText.graphics.beginFill("grey").drawRoundRect(panel2.width/2,0,panel2.width/2-5,panel2.height+10,10);
+	backgroundText.graphics.beginFill("grey").drawRect(panel2.width/2,0,panel2.width/2,panel2.height,0);
         backgroundText.alpha=0.65;
+	
+	var backgroundAction = panel2.addChild(new createjs.Shape());
+	backgroundAction.graphics.beginFill("blue").drawRect(0,0,panel2.width/2+5,panel2.height,10);
+	
+	var gameLog = panel2.addChild(new createjs.Text ("Hola esta es una linea de ejemplo muuuuuuuuuuuuuuuuuuuuuuuuuy laaaaaaaaaaaarga a ver que pasa..... Ehhh!", "14px Arial", "#000"));
+        gameLog.x= 420;
+        gameLog.y=15;
+	gameLog.lineWidth=370;
+	
 }
 
-function checkGame() {
-        layer1.visible=false;
+function showForm(type){
+	layer1.visible=false;
+	$("#msg").html("");
         formDOMElement.visible=true;
         formDOMElement.regX = form.offsetWidth*0.5;
         formDOMElement.regY = form.offsetHeight*0.5;
@@ -159,9 +166,18 @@ function checkGame() {
         formDOMElement.y =  -150;
         formDOMElement.rotation=-360;
         formDOMElement.alpha=0;
-        $('#loginForm').on('click',login);
-        createjs.Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:360},1000,createjs.Ease.cubicOut);
+        $('#botton').on('click',type);
+        createjs.Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:360},1000,createjs.Ease.cubicOut);       
 }
+
+function checkUser() {
+	showForm(login);
+}
+
+function showStatistics() {
+	showForm(login);
+}
+
 
 function noalpha(){
       this.alpha = 1;
@@ -221,19 +237,6 @@ function closeBox(){
         stage.removeChild(stage.getChildByName(this.name));
 }
 
-function statistics(){
-        layer1.visible=false;
-        formDOMElement.visible=true;
-        formDOMElement.regX = form.offsetWidth*0.5;
-        formDOMElement.regY = form.offsetHeight*0.5;
-        //move the form above the screen
-        formDOMElement.x = canvas.width * 0.5;
-        formDOMElement.y =  -150;
-        formDOMElement.rotation=-360;
-        formDOMElement.alpha=0;
-        $('#loginForm').on('click',showStatistics);
-        createjs.Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:360},1000,createjs.Ease.cubicOut);       
-}
 
 function soundChange(){
         if (stage.removeChild(stage.getChildByName("speaker"))){
