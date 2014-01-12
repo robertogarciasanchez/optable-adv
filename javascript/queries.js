@@ -56,7 +56,7 @@ function loadGame(){
         url: "php/getGame.php",
         data: "id="+id,
         success: function(data){
-            //alert(data);
+            alert(data);
             if(data){
                 game = eval("(" + data + ")");
                 load=true;

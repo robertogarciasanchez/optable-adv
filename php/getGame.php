@@ -163,7 +163,7 @@ function getTratamientos($con, $id){
     if($stmt = $con->prepare($query)){
         $stmt->bind_param('s', $id);
         $stmt->execute();
-        $stmt->bind_result($tratamiento, $aplicacion, $descripcion);
+        $stmt->bind_result($nombre, $aplicacion, $descripcion);
         $stmt->store_result();
         $contador= $stmt->num_rows;
         
@@ -171,7 +171,7 @@ function getTratamientos($con, $id){
             $row = array();
             $i=0;
             while($stmt->fetch()){
-                $row[$i]->tratamiento = ucfirst(utf8_encode($tratamiento));
+                $row[$i]->nombre = ucfirst(utf8_encode($nombre));
                 $row[$i]->aplicacion = ucfirst(utf8_encode($aplicacion));
                 $row[$i]->descripcion = ucfirst(utf8_encode($descripcion));
                 $i++;

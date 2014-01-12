@@ -14,8 +14,9 @@ var game;
 var gameLog;
 var load;
 var indexGame=0;
-var lifes;
+var lifes=3;
 var score=100;
+var control;
         
 function init() {     
         //initialize the stage
@@ -119,6 +120,7 @@ function layerWarning(){
 	warning.textAlign="center";
 	warning.count=0;
 	warning.on("tick",changeAlpha);
+	warning.shadow = new createjs.Shadow("#000", 5, 5, 10);
 }
 
 function layerGame(){  
@@ -162,6 +164,7 @@ function layerGame(){
         chrono = panel1.addChild(new createjs.Text ("00:00", "26px Arial", "#FFF"));
         chrono.x= 200;
         chrono.y=10;
+	
         
         var exit = panel1.addChild(new createjs.Bitmap("./images/exit.png"));
         exit.name="clock";
@@ -185,12 +188,71 @@ function layerGame(){
         gameLog.x= 420;
         gameLog.y=15;
 	gameLog.lineWidth=370;
+	gameLog.shadow = new createjs.Shadow("#000", 2, 2, 10);
 	
 	var next = panel2.addChild(new createjs.Bitmap("./images/bnext.png"));
         next.name="bnext";
         next.x=panel2.width-35;
         next.y=panel2.height-35;
-        next.on("click", goNext);
+        next.on("click", play);
+	
+	control = panel2.addChild(new createjs.Container());
+        control.name = "layerGame";
+        control.visible=false;
+	
+	var select1 = $('#select1').get(0);
+        var panelControl1 = control.addChild(new createjs.DOMElement(select1));
+	panelControl1.x=90;
+	panelControl1.y=90;
+	
+	var label1 = control.addChild(new createjs.Text ("Who", "20px Arial", "#000"));
+	label1.x=80;
+	label1.y=5;
+	label1.textAlign="right";
+	label1.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	
+	var select2 = $('#select2').get(0);
+        var panelControl2 = control.addChild(new createjs.DOMElement(select2));
+	panelControl2.x=90;
+	panelControl2.y=115;
+	
+	var label2 = control.addChild(new createjs.Text ("Action", "20px Arial", "#000"));
+	label2.x=80;
+	label2.y=30;
+	label2.textAlign="right";
+	label2.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	
+	var select3 = $('#select3').get(0);
+        var panelControl3 = control.addChild(new createjs.DOMElement(select3));
+	panelControl3.x=90;
+	panelControl3.y=140;
+	
+	var label3 = control.addChild(new createjs.Text ("Whom", "20px Arial", "#000"));
+	label3.x=80;
+	label3.y=55;
+	label3.textAlign="right";
+	label3.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	
+	var select4 = $('#select4').get(0);
+        var panelControl4 = control.addChild(new createjs.DOMElement(select4));
+	panelControl4.x=90;
+	panelControl4.y=165;
+	
+	
+	var label4 = control.addChild(new createjs.Text ("Material", "20px Arial", "#000"));
+	label4.x=80;
+	label4.y=80;
+	label4.textAlign="right";
+	label4.shadow = new createjs.Shadow("#FFF", 3, 3, 10);
+        
+	//panelControl2.visible=false;
+	//panelControl3.visible=false;
+	//panelControl4.visible=false;
+	//panelControl.name="controls";
+	
+	var btest = control.addChild(new createjs.Bitmap("./images/bnext2.png"));
+	btest.x=350;
+	btest.y=30;
 	
 }
 
@@ -330,7 +392,7 @@ function music(){
 function preLoadGame() {
 	showWarning("Cargando ...");
 	loadGame();
-	setTimeout("startGame();", 1000);
+	setTimeout("startGame();", 2000);
 }
 
 function playGuest() {
@@ -345,11 +407,7 @@ function startGame() {
 		createjs.Sound.stop();
 		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 		//Personaje hablando
-		goNext();
-		
-		lifes=3;
-		startChrono();
-		chrono.on("tick",updateChrono);
+		play();
 	}
 	else	{
 		alert("Imposible load game");
@@ -362,27 +420,31 @@ function startChrono(){
                 timestart   = new Date();
                 timercount = true;
         }
+	chrono.on("tick",updateChrono);
 }
 
 function updateChrono() {
         var time;
         if(!timercount){
                 time="00:00";
+		chrono.text=(time);
         }
         else{
                 timeend = new Date();
                 var timedifference = timeend.getTime() - timestart.getTime();
                 timeend.setTime(timedifference);
+		chrono.text=(formatChrono(timeend,0));
+		time=timeend;
         }
-        chrono.text=(formatChrono(timeend,0));
-        return timeend;
+        
+        return time;
 }
 
 function stopChrono() {
     var total= updateChrono();
     timercount=false;
     timestart = null;
-    chrono.text=(total);
+    chrono.text=("00:00");
     return total;
 }
 
@@ -412,7 +474,7 @@ function formatChrono(t,milliseconds){
         return time;
 }
 
-function goNext(){
+function play(){
 	var txt;
 	switch (indexGame) {
 		case 0: txt = "Your are going to practice ";
@@ -421,6 +483,7 @@ function goNext(){
 			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=true;
 			indexGame++;
 			break;
+		
 		case 1:	if (game.sintomas.length!=0) {
 				txt = "The usual simptoms are: \n";
 				for(var i=0;i < game.sintomas.length;i++){
@@ -432,6 +495,7 @@ function goNext(){
 			gameLog.text=(txt);
 			indexGame++;
 			break;
+		
 		case 2:if (game.causas.length!=0) {
 				txt = "The cuases can be: \n";
 				for(var i=0;i < game.causas.length;i++){
@@ -443,11 +507,56 @@ function goNext(){
 			gameLog.text=(txt);
 			indexGame++;
 			break;
-		case 3: txt="Indicate which clinical tests are needed";
+		
+		case 3:	if (game.pruebas.length!=0) {
+				txt = "These are the clinical tests which are needed:\n";
+				for(var i=0;i < game.pruebas.length;i++){
+					txt += game.pruebas[i]+".\n";
+				}
+			}
+			else
+				txt="No clinical tests..";
 			gameLog.text=(txt);
 			indexGame++;
-			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=false;
 			break;
+		
+		case 4:	if (game.tratamientos.length!=0) {
+				txt = "These treatments are available:\n";
+				for(var i=0;i < game.tratamientos.length;i++){
+					txt += game.tratamientos[i].nombre+".\n";
+				}
+			}
+			else
+				txt="No clinical tests..";
+			gameLog.text=(txt);
+			indexGame++;
+			break;
+		
+		case 5:	if (game.tratamientos.length!=0) {
+				txt = "This is the surgery we want to practice:\n";
+				for(var i=0;i < game.tratamientos.length;i++){
+					if (game.tratamientos[i].aplicacion == "Surgeon" ) {
+						txt += game.tratamientos[i].nombre+".\n";
+						txt += game.tratamientos[i].descripcion+".\n";
+					}
+					
+				}
+			}
+			else
+				txt="No clinical tests..";
+			gameLog.text=(txt);
+			indexGame++;
+			break;
+		case 6: txt = "Now we are ready to start.\nConcentrate!\nAnd good luck!";
+			gameLog.text=(txt);
+			indexGame++;
+			break;
+		
+		case 7: control.visible=true;
+			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=false;
+			startChrono();
+			break;
+		
 		default: alert("siguiente paso");
 	}
 }
@@ -458,6 +567,7 @@ function endGame() {
 	indexGame=0;
 	game=null;
 	load=0;
+	lifes=3;
         stopChrono();
         main();
 	createjs.Sound.stop();
