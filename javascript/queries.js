@@ -8,9 +8,9 @@ function login(){
         success: function(data){
             if(data=='1'){
                 $("#msg").html("You have logged");
-                formDOMElement.visible=false;
+                stage.getChildByName("layerForm").visible=false;
                 registered=true;
-                startGame();
+                preLoadGame();
                 $("#username").val('username');
                 $("#password").val('password');
             }
@@ -34,7 +34,7 @@ function statistics(){
         success: function(data){
             if(data=='1'){
                 $("#msg").html("You have logged");
-                formDOMElement.visible=false;
+                stage.getChildByName("layerForm").visible=false;
                 $("#username").val('username');
                 $("#password").val('password');
                 //MOSTRAR ESTADISTICA
@@ -56,14 +56,17 @@ function loadGame(){
         url: "php/getGame.php",
         data: "id="+id,
         success: function(data){
-            alert(data);
+            //alert(data);
             if(data){
-                game = eval("("+data+")");
-                for(i=0;i<game.pruebas.length;i++)
+                game = eval("(" + data + ")");
+                load=true;
+                /*for(i=0;i<game.pruebas.length;i++)
                     alert(game.pruebas[i]);
+                alert(game.problema.nombre);*/
             }
             else{
                 alert("Error!");
+                load=false;
             }
         },
         beforeSend:function(){

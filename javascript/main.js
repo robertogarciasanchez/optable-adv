@@ -1,14 +1,6 @@
 //Variables globales
 var canvas;
 var stage;
-var score = 0;
-var jugar = false;
-var sound = true;
-var bg;
-var layer1;
-var layer2;
-var formDOMElement;
-var registered = false;
 
 //Variables Chronometer
 var chrono;
@@ -17,42 +9,50 @@ var timestart = null;
 var timeend;
 
 //Variables Juego
+var sound = true;
 var game;
-
+var gameLog;
+var load;
+var indexGame=0;
+var lifes;
+var score=100;
         
 function init() {     
         //initialize the stage
         canvas = $('#canvas').get(0);
         stage = new createjs.Stage(canvas);
         stage.enableMouseOver(10);
-        mainLayer();
-        gameLayer();
+        layerMain();
+	layerForm();
+	layerWarning()
+        layerGame();
         music();
         soundChange();        
-        createjs.Ticker.on("tick", tick); 
+        createjs.Ticker.on("tick", stage); 
 }
 
-function mainLayer() {
-        var background = stage.addChild(new createjs.Bitmap("./images/bg1.png"));
-
-        layer1 = stage.addChild(new createjs.Container());        
-        layer1.name = "layer1";
+function layerMain() {
+        var layerMain = stage.addChild(new createjs.Container());        
+        layerMain.name = "layerMain";
+	
+	var background = layerMain.addChild(new createjs.Bitmap("./images/bg1.png"));
+	background.name="bg";
         
-        var btn1 = layer1.addChild(new createjs.Bitmap("./images/play.png"));
+        var btn1 = layerMain.addChild(new createjs.Bitmap("./images/play.png"));
         btn1.x=canvas.width/2-65;
         btn1.y=255;
         btn1.on("click",checkUser);
         btn1.on("mouseover",alpha);
         btn1.on("mouseout",noalpha);
         
-        var btn2 = layer1.addChild(new createjs.Bitmap("./images/guest.png"));
+        var btn2 = layerMain.addChild(new createjs.Bitmap("./images/guest.png"));
         btn2.x=canvas.width/2-65;
         btn2.y=btn1.y+43;
-        btn2.on("click",startGame);
+        btn2.on("click",playGuest);
         btn2.on("mouseover",alpha);
         btn2.on("mouseout",noalpha);
         
-        var btn3 =layer1.addChild(new createjs.Bitmap("./images/howto.png"));
+        var btn3 =layerMain.addChild(new createjs.Bitmap("./images/howto.png"));
         btn3.x=canvas.width/2-65;
         btn3.y=btn2.y+43;
         btn3.txt="howto";
@@ -60,17 +60,15 @@ function mainLayer() {
         btn3.on("mouseover",alpha);
         btn3.on("mouseout",noalpha);
         
-        var btn4 =layer1.addChild(new createjs.Bitmap("./images/statistics.png"));
+        var btn4 =layerMain.addChild(new createjs.Bitmap("./images/statistics.png"));
         btn4.x=canvas.width/2-65;
         btn4.y=btn3.y+43;
         btn4.txt="sta";
-        //btn4.on("click",showStatistics);
-	//PRUEBAS
-	btn4.on("click",loadGame);
+        btn4.on("click",showStatistics);
         btn4.on("mouseover",alpha);
         btn4.on("mouseout",noalpha);  
         
-        var btn5 =layer1.addChild(new createjs.Bitmap("./images/about1.png"));
+        var btn5 =layerMain.addChild(new createjs.Bitmap("./images/about1.png"));
         btn5.x=canvas.width/2-65;
         btn5.y=btn4.y+43;
         btn5.txt="about";
@@ -78,40 +76,69 @@ function mainLayer() {
         btn5.on("mouseover",alpha);
         btn5.on("mouseout",noalpha);
         
-        form =$('#loginForm').get(0);
-        formDOMElement = new createjs.DOMElement(form);
-        formDOMElement.visible=false;
-        stage.addChild(formDOMElement);
-        
-        var logo = layer1.addChild(new createjs.Bitmap("./images/logoBig.png"));
+        var logo = layerMain.addChild(new createjs.Bitmap("./images/logoBig.png"));
         logo.x=-570;
         logo.y=65;
         createjs.Tween.get(logo).to({alpha:1, x:70},1500,createjs.Ease.bounceOut);
 }
 
 function main() {
-        layer2.visible=false;
-        layer1.visible=true;
-        formDOMElement.visible=false;
+	stage.getChildByName("layerForm").visible=false;
+        stage.getChildByName("layerGame").visible=false;
+        stage.getChildByName("layerMain").visible=true;
+        stage.getChildByName("form").visible=false;
         createjs.Sound.stop();
         createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
 }
 
-function gameLayer(){  
-        layer2 = stage.addChild(new createjs.Container());
-        layer2.name = "layer2";
-        layer2.visible=false;
+function layerForm(){
+	var layerForm = stage.addChild(new createjs.Container());
+        layerForm.name = "layerForm";
+        layerForm.visible=false;
+	
+	var background = layerForm.addChild(new createjs.Bitmap("./images/waiting.png"));
+	background.name="bgWaiting";
+	
+	var formHTML =$('#loginForm').get(0);
+        var form = layerForm.addChild(new createjs.DOMElement(formHTML));
+        form.visible=false;
+	form.name="form";
+}
+function layerWarning(){
+	var layerWarning = stage.addChild(new createjs.Container());
+        layerWarning.name = "layerWarning";
+	layerWarning.visible = false;
+	
+	var background = layerWarning.addChild(new createjs.Bitmap("./images/waiting.png"));
+	background.name="bgWaiting";
+	
+	var warning = layerWarning.addChild(new createjs.Text ("", "28px Arial", "#FFF"));
+	warning.name="warning";
+	warning.x = canvas.width/2;
+	warning.y = canvas.height-100;
+	warning.textAlign="center";
+	warning.count=0;
+	warning.on("tick",changeAlpha);
+}
+
+function layerGame(){  
+        var layerGame = stage.addChild(new createjs.Container());
+        layerGame.name = "layerGame";
+        layerGame.visible=false;
+	
+	var background = layerGame.addChild(new createjs.Bitmap("./images/waiting.png"));
+	background.name="bgGame";
         
-        var background = layer2.addChild(new createjs.Bitmap("./images/bg1.png"));
-        
-        var panel1 = layer2.addChild(new createjs.Container());
+        var panel1 = layerGame.addChild(new createjs.Container());
         panel1.name = "panel1";
         panel1.width=420;
         panel1.height=50;
         panel1.x=canvas.width-420;
-        
-        //var background = panel.addChild(new createjs.Shape());
-	//background.graphics.beginFill("blue").drawRect(0,0,panel.width,panel.height,10);     
+	
+	var backgroundData = panel1.addChild(new createjs.Shape());
+	backgroundData.graphics.beginFill("gray").drawRect(0,0,panel1.width,panel1.height-6,0);
+	backgroundData.alpha=0.60;
+           
         var life;
         for (var i=0;i<3;i++) {
                 life = panel1.addChild(new createjs.Bitmap("./images/heart.png"));
@@ -121,8 +148,11 @@ function gameLayer(){
         }
         
         var log = panel1.addChild(new createjs.Text ("0000", "28px Arial", "#FFF"));
-        log.x= panel1.width-130;
+	log.name="log";
+	log.textAlign="rigth";
+        log.x= panel1.width-115;
         log.y=9;
+	
         
         var clock = panel1.addChild(new createjs.Bitmap("./images/clock.png"));
         clock.name="clock";
@@ -137,42 +167,49 @@ function gameLayer(){
         exit.name="clock";
         exit.x=panel1.width-40;
         exit.y=5;
-        exit.on('click',endGame);
+        exit.on('click',endGame); 
         
-        
-        var panel2 = layer2.addChild(new createjs.Container());
+        var panel2 = layerGame.addChild(new createjs.Container());
         panel2.name = "panel2";
         panel2.width=798;
         panel2.height=110;
         panel2.y=canvas.height-110;
         
-        var backgroundText = panel2.addChild(new createjs.Shape());
-	backgroundText.graphics.beginFill("grey").drawRect(panel2.width/2,0,panel2.width/2,panel2.height,0);
-        backgroundText.alpha=0.65;
+	var backgroundText = panel2.addChild(new createjs.Bitmap("./images/bgtxt.png"));
+	backgroundText.x=400;
 	
-	var backgroundAction = panel2.addChild(new createjs.Shape());
-	backgroundAction.graphics.beginFill("blue").drawRect(0,0,panel2.width/2+5,panel2.height,10);
+	var backgroundAction = panel2.addChild(new createjs.Bitmap("./images/bgAct.png"));
 	
-	var gameLog = panel2.addChild(new createjs.Text ("Hola esta es una linea de ejemplo muuuuuuuuuuuuuuuuuuuuuuuuuy laaaaaaaaaaaarga a ver que pasa..... Ehhh!", "14px Arial", "#000"));
+	gameLog = panel2.addChild(new createjs.Text ("", "14px Arial", "#FFF"));
+	gameLog.name="gameLog";
         gameLog.x= 420;
         gameLog.y=15;
 	gameLog.lineWidth=370;
 	
+	var next = panel2.addChild(new createjs.Bitmap("./images/bnext.png"));
+        next.name="bnext";
+        next.x=panel2.width-35;
+        next.y=panel2.height-35;
+        next.on("click", goNext);
+	
 }
 
 function showForm(type){
-	layer1.visible=false;
+	stage.getChildByName("layerMain").visible=false;
+	stage.getChildByName("layerForm").visible=true;
 	$("#msg").html("");
-        formDOMElement.visible=true;
-        formDOMElement.regX = form.offsetWidth*0.5;
-        formDOMElement.regY = form.offsetHeight*0.5;
+	
+	var form = stage.getChildByName("layerForm").getChildByName("form");
+        form.visible=true;
+        form.regX = stage.offsetWidth*0.5;
+        form.regY = form.offsetHeight*0.5;
         //move the form above the screen
-        formDOMElement.x = canvas.width * 0.5;
-        formDOMElement.y =  -150;
-        formDOMElement.rotation=-360;
-        formDOMElement.alpha=0;
+        form.x = canvas.width * 0.5-120;
+        form.y =  -170;
+        form.rotation=-360;
+        form.alpha=0;
         $('#botton').on('click',type);
-        createjs.Tween.get(formDOMElement).to({alpha:1, y:canvas.height * 0.5, rotation:360},1000,createjs.Ease.cubicOut);       
+        createjs.Tween.get(form).to({alpha:1, y:canvas.height * 0.5-100, rotation:360},1000,createjs.Ease.cubicOut);       
 }
 
 function checkUser() {
@@ -183,6 +220,14 @@ function showStatistics() {
 	showForm(login);
 }
 
+function showWarning(txt) {
+	stage.getChildByName("layerWarning").visible=true;
+	stage.getChildByName("layerWarning").getChildByName("warning").text=txt;
+}
+
+function closeWarning() {
+	stage.getChildByName("layerWarning").visible=false;
+}
 
 function noalpha(){
       this.alpha = 1;
@@ -190,6 +235,10 @@ function noalpha(){
 
 function alpha(){
       this.alpha = 0.75;
+}
+
+function changeAlpha(){
+      this.alpha = Math.cos(this.count++*0.1)*0.5+0.8;
 }
 
 function infoBox() {
@@ -207,11 +256,9 @@ function infoBox() {
         switch (this.label) {
                 case "How to...":
                         box.img="./images/about.png";
-                        
                         break;
                 case "About":
                         box.img="./images/about.png";
-                
                         break;
                 default:
                         box.img="./images/about.png";
@@ -234,7 +281,7 @@ function infoBox() {
 	msg.y = height-20;
 
         box.on("click",closeBox);
-        stage.update();
+        //stage.update();
 }
 
 
@@ -280,29 +327,34 @@ function music(){
         }
 }
 
-function tick() {
-	// this set makes it so the stage only re-renders when an event handler indicates a change has happened.
-       // if (update) {
-                update = false; // only update once
-                stage.update();
-       // }
+function preLoadGame() {
+	showWarning("Cargando ...");
+	loadGame();
+	setTimeout("startGame();", 1000);
 }
 
 function playGuest() {
-        formDOMElement.visible=false;
-        registered=false;
-        startGame();
+        stage.getChildByName("layerMain").visible=false;
+	preLoadGame();
 }
 
 function startGame() {
-        layer2.visible=true;
-        //alert("JUGANDO");//code
-        createjs.Sound.stop();
-        createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
-        
-        startChrono();
-        chrono.on("tick",updateChrono);
-        //;
+	closeWarning();
+	if(load==1){
+		stage.getChildByName("layerGame").visible=true;
+		createjs.Sound.stop();
+		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
+		//Personaje hablando
+		goNext();
+		
+		lifes=3;
+		startChrono();
+		chrono.on("tick",updateChrono);
+	}
+	else	{
+		alert("Imposible load game");
+		endGame();
+	}
 }
 
 function startChrono(){
@@ -360,10 +412,79 @@ function formatChrono(t,milliseconds){
         return time;
 }
 
+function goNext(){
+	var txt;
+	switch (indexGame) {
+		case 0: txt = "Your are going to practice ";
+			txt += game.problema.nombre+".\n"+game.problema.descripcion;
+			gameLog.text=(txt);
+			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=true;
+			indexGame++;
+			break;
+		case 1:	if (game.sintomas.length!=0) {
+				txt = "The usual simptoms are: \n";
+				for(var i=0;i < game.sintomas.length;i++){
+					txt += game.sintomas[i]+".\n";
+				}
+			}
+			else
+				txt="No simptoms";
+			gameLog.text=(txt);
+			indexGame++;
+			break;
+		case 2:if (game.causas.length!=0) {
+				txt = "The cuases can be: \n";
+				for(var i=0;i < game.causas.length;i++){
+					txt += game.causas[i]+".\n";
+				}
+			}
+			else
+				txt="No causes.";
+			gameLog.text=(txt);
+			indexGame++;
+			break;
+		case 3: txt="Indicate which clinical tests are needed";
+			gameLog.text=(txt);
+			indexGame++;
+			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=false;
+			break;
+		default: alert("siguiente paso");
+	}
+}
+
 function endGame() {
         registered=false;
         score=0;
+	indexGame=0;
+	game=null;
+	load=0;
         stopChrono();
         main();
+	createjs.Sound.stop();
+        createjs.Sound.play("intro", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 }
+
+
+function morePoints(num){
+	if (!num) {
+		num=100;
+	}
+	score += num;
+	if (score >= 0) {
+		stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").color="white";
+	}
+	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
+}
+
+function lessPoints(num){
+	if (!num) {
+		num=50;
+	}
+	score -= num;
+	if (score < 0) {
+		stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").color="red";
+	}
+	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
+}
+
 
