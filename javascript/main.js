@@ -16,6 +16,9 @@ var timercount = false;
 var timestart = null;
 var timeend;
 
+//Variables Juego
+var game;
+
         
 function init() {     
         //initialize the stage
@@ -61,7 +64,9 @@ function mainLayer() {
         btn4.x=canvas.width/2-65;
         btn4.y=btn3.y+43;
         btn4.txt="sta";
-        btn4.on("click",showStatistics);
+        //btn4.on("click",showStatistics);
+	//PRUEBAS
+	btn4.on("click",loadGame);
         btn4.on("mouseover",alpha);
         btn4.on("mouseout",noalpha);  
         
