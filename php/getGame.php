@@ -30,7 +30,7 @@ $game->pruebas = getPruebas($con, $id);
 $game->tratamientos = array();
 $game->tratamientos = getTratamientos($con, $id);
 $game->personal = array();
-$game->personals = getPersonal($con, $id);
+$game->personal = getPersonal($con, $id);
 
 echo json_encode($game);
 

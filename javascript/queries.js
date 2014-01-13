@@ -50,19 +50,16 @@ function statistics(){
 }
 
 function loadGame(){
-    var id = '4857';
+    var id = '4857';//CODIGO DE LA CIRUGIA A CARGAR
     $.ajax({
         type: "POST",
         url: "php/getGame.php",
         data: "id="+id,
         success: function(data){
-            alert(data);
+            //alert(data);
             if(data){
                 game = eval("(" + data + ")");
                 load=true;
-                /*for(i=0;i<game.pruebas.length;i++)
-                    alert(game.pruebas[i]);
-                alert(game.problema.nombre);*/
             }
             else{
                 alert("Error!");

@@ -75,5 +75,6 @@ select {
     -moz-appearance:none;
     appearance:none;
     cursor:pointer;
+    opacity:0;
 }
 

@@ -15,7 +15,7 @@ var gameLog;
 var load;
 var indexGame=0;
 var lifes=3;
-var score=100;
+var score=0;
 var control;
         
 function init() {     
@@ -141,13 +141,7 @@ function layerGame(){
 	backgroundData.graphics.beginFill("gray").drawRect(0,0,panel1.width,panel1.height-6,0);
 	backgroundData.alpha=0.60;
            
-        var life;
-        for (var i=0;i<3;i++) {
-                life = panel1.addChild(new createjs.Bitmap("./images/heart.png"));
-                life.name="life"+i;
-                life.x=10+(40*i);
-                life.y=8;
-        }
+        drawLifes();
         
         var log = panel1.addChild(new createjs.Text ("0000", "28px Arial", "#FFF"));
 	log.name="log";
@@ -200,21 +194,11 @@ function layerGame(){
         control.name = "layerGame";
         control.visible=false;
 	
-	var select1 = $('#select1').get(0);
-        var panelControl1 = control.addChild(new createjs.DOMElement(select1));
-	panelControl1.x=90;
-	panelControl1.y=90;
-	
 	var label1 = control.addChild(new createjs.Text ("Who", "20px Arial", "#000"));
 	label1.x=80;
 	label1.y=5;
 	label1.textAlign="right";
 	label1.shadow = new createjs.Shadow("#000000", 5, 5, 10);
-	
-	var select2 = $('#select2').get(0);
-        var panelControl2 = control.addChild(new createjs.DOMElement(select2));
-	panelControl2.x=90;
-	panelControl2.y=115;
 	
 	var label2 = control.addChild(new createjs.Text ("Action", "20px Arial", "#000"));
 	label2.x=80;
@@ -222,38 +206,24 @@ function layerGame(){
 	label2.textAlign="right";
 	label2.shadow = new createjs.Shadow("#000000", 5, 5, 10);
 	
-	var select3 = $('#select3').get(0);
-        var panelControl3 = control.addChild(new createjs.DOMElement(select3));
-	panelControl3.x=90;
-	panelControl3.y=140;
-	
 	var label3 = control.addChild(new createjs.Text ("Whom", "20px Arial", "#000"));
 	label3.x=80;
 	label3.y=55;
 	label3.textAlign="right";
 	label3.shadow = new createjs.Shadow("#000000", 5, 5, 10);
 	
-	var select4 = $('#select4').get(0);
-        var panelControl4 = control.addChild(new createjs.DOMElement(select4));
-	panelControl4.x=90;
-	panelControl4.y=165;
-	
-	
 	var label4 = control.addChild(new createjs.Text ("Material", "20px Arial", "#000"));
 	label4.x=80;
 	label4.y=80;
 	label4.textAlign="right";
 	label4.shadow = new createjs.Shadow("#FFF", 3, 3, 10);
-        
-	//panelControl2.visible=false;
-	//panelControl3.visible=false;
-	//panelControl4.visible=false;
-	//panelControl.name="controls";
 	
 	var btest = control.addChild(new createjs.Bitmap("./images/bnext2.png"));
 	btest.x=350;
 	btest.y=30;
+	btest.on("click",checkAnswer);
 	
+	drawControls();
 }
 
 function showForm(type){
@@ -476,6 +446,7 @@ function formatChrono(t,milliseconds){
 
 function play(){
 	var txt;
+	alert(indexGame);
 	switch (indexGame) {
 		case 0: txt = "Your are going to practice ";
 			txt += game.problema.nombre+".\n"+game.problema.descripcion;
@@ -552,9 +523,11 @@ function play(){
 			indexGame++;
 			break;
 		
-		case 7: control.visible=true;
+		case 7:	loadControls();
+			control.visible=true;
 			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=false;
 			startChrono();
+			
 			break;
 		
 		default: alert("siguiente paso");
@@ -564,16 +537,18 @@ function play(){
 function endGame() {
         registered=false;
         score=0;
+	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
 	indexGame=0;
+	control.visible=false;
 	game=null;
 	load=0;
 	lifes=3;
+	drawLifes()
         stopChrono();
         main();
 	createjs.Sound.stop();
         createjs.Sound.play("intro", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 }
-
 
 function morePoints(num){
 	if (!num) {
@@ -597,4 +572,94 @@ function lessPoints(num){
 	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
 }
 
+function loadControls() {
+	var newOptions;
+	newOptions = "<select id=\"select1\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.personal.length;i++){
+			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select2\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.personal.length;i++){
+			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select3\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.personal.length;i++){
+			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select4\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.personal.length;i++){
+			newOptions += "<option value='"+game.personal[i]+"'>"+game.personal[i]+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	$("#controls").html(newOptions);
+	drawControls();
+	
+}
+
+function drawControls(){
+	var select1 = $('#select1').get(0);
+        var panelControl1 = control.addChild(new createjs.DOMElement(select1));
+	panelControl1.x=90;
+	panelControl1.y=90;
+	
+	var select2 = $('#select2').get(0);
+        var panelControl2 = control.addChild(new createjs.DOMElement(select2));
+	panelControl2.x=90;
+	panelControl2.y=115;
+	
+	var select3 = $('#select3').get(0);
+        var panelControl3 = control.addChild(new createjs.DOMElement(select3));
+	panelControl3.x=90;
+	panelControl3.y=140;
+	
+	var select4 = $('#select4').get(0);
+        var panelControl4 = control.addChild(new createjs.DOMElement(select4));
+	panelControl4.x=90;
+	panelControl4.y=165;
+	
+}
+
+function checkAnswer() {
+	var txt= $('#select1').val()+ $('#select2').val()+ $('#select3').val()+ $('#select4').val();
+	alert(txt);
+	
+	if (false) {
+		morePoints();
+	}
+	else{
+		lessPoints();
+		lifes-=1;
+		alert(lifes);
+		var aux=lifes-1;
+		var txtlife="life"+lifes;
+		stage.getChildByName("layerGame").getChildByName("panel1").getChildByName(txtlife).visible=false;
+		
+		if (lifes==0) {
+			//gameOver();
+			endGame();
+		}
+	}
+}
+
+function drawLifes(){
+	var panel1=stage.getChildByName("layerGame").getChildByName("panel1");
+	var life;
+        for (var i=0;i<lifes;i++) {
+                life = panel1.addChild(new createjs.Bitmap("./images/heart.png"));
+                life.name="life"+i;
+                life.x=10+(40*i);
+                life.y=8;
+        }
+}
 
