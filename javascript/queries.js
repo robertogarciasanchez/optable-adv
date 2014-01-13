@@ -73,8 +73,6 @@ function loadGame(){
 }
 
 
-
-
 function loadOperation(){
     
     

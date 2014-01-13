@@ -377,6 +377,7 @@ function startGame() {
 		createjs.Sound.stop();
 		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 		//Personaje hablando
+		indexGame=0;
 		play();
 	}
 	else	{
@@ -640,8 +641,6 @@ function checkAnswer() {
 	else{
 		lessPoints();
 		lifes-=1;
-		alert(lifes);
-		var aux=lifes-1;
 		var txtlife="life"+lifes;
 		stage.getChildByName("layerGame").getChildByName("panel1").getChildByName(txtlife).visible=false;
 		
