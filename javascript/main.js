@@ -447,7 +447,6 @@ function formatChrono(t,milliseconds){
 
 function play(){
 	var txt;
-	alert(indexGame);
 	switch (indexGame) {
 		case 0: txt = "Your are going to practice ";
 			txt += game.problema.nombre+".\n"+game.problema.descripcion;
@@ -538,6 +537,7 @@ function play(){
 function endGame() {
         registered=false;
         score=0;
+	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").color="white";
 	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
 	indexGame=0;
 	control.visible=false;
@@ -652,13 +652,20 @@ function checkAnswer() {
 }
 
 function drawLifes(){
-	var panel1=stage.getChildByName("layerGame").getChildByName("panel1");
-	var life;
-        for (var i=0;i<lifes;i++) {
-                life = panel1.addChild(new createjs.Bitmap("./images/heart.png"));
-                life.name="life"+i;
-                life.x=10+(40*i);
-                life.y=8;
-        }
+	var panel=stage.getChildByName("layerGame").getChildByName("panel1");
+	if (panel.getChildByName("life0")) {
+		for (var i=0;i<lifes;i++) {
+			name="life"+i;
+			panel.getChildByName(name).visible=true;
+		}
+	}
+	else{ 
+		for (var i=0;i<lifes;i++) {
+			var life = panel.addChild(new createjs.Bitmap("./images/heart.png"));
+			life.name="life"+i;
+			life.x=10+(40*i);
+			life.y=8;
+		}
+	}
 }
 
