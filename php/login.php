@@ -1,4 +1,10 @@
 <?php
+/**
+*
+* Devuelve un objeto JSON con toda la información necesaria para jugar
+* @author Roberto García
+*
+*/
 
 $mysql_hostname = "localhost";
 $mysql_user = "lampp";
@@ -17,10 +23,10 @@ if(isset($_POST['name'])){
     $stmt->bind_result($name, $pwd);
     $stmt->store_result();
     if($stmt->num_rows == 1){
-        echo true;
+        echo $name;
     }
     else{
-        echo false;
+        echo 0;
     }
     $stmt->close();
 }

@@ -9,6 +9,9 @@
 #header {   height:85px;
             background:url("../images/logo.png") no-repeat;
         }
+#uoc {      height:85px;
+            background:url("../images/uoc.png") no-repeat right;
+        }
         
 #footer {   font-size:0.85em;
             margin: 4px 0 0 ;

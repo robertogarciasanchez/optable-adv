@@ -1,3 +1,26 @@
+/**
+* @fileoverview Código creación interfaz Operating Table - Adventure
+*
+* @author Roberto García
+* @version 0.1
+*/
+
+
+/*  The JavaScript code in this page is free software: you can
+    redistribute it and/or modify it under the terms of the GNU
+    General Public License (GNU GPL) as published by the Free Software
+    Foundation, either version 3 of the License, or (at your option)
+    any later version.  The code is distributed WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+    As additional permission under GNU GPL version 3 section 7, you
+    may distribute non-source (e.g., minimized or compacted) forms of
+    that code without the copy of the GNU GPL normally required by
+    section 4, provided you include this license notice and a URL
+    through which recipients can access the Corresponding Source.
+    */
+
 //Variables globales
 var canvas;
 var stage;
@@ -9,11 +32,14 @@ var timestart = null;
 var timeend;
 
 //Variables Juego
+var usuario=0;
 var sound = true;
 var game;
+var actions;
 var gameLog;
 var load;
 var indexGame=0;
+var indexAction=0;
 var lifes=3;
 var score=0;
 var control;
@@ -84,12 +110,13 @@ function layerMain() {
 }
 
 function main() {
+	createjs.Sound.stop();
+        createjs.Sound.play("intro1", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
 	stage.getChildByName("layerForm").visible=false;
         stage.getChildByName("layerGame").visible=false;
         stage.getChildByName("layerMain").visible=true;
         stage.getChildByName("form").visible=false;
-        createjs.Sound.stop();
-        createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
+        
 }
 
 function layerForm(){
@@ -198,19 +225,19 @@ function layerGame(){
 	label1.x=80;
 	label1.y=5;
 	label1.textAlign="right";
-	label1.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	label1.shadow = new createjs.Shadow("#000", 5, 5, 10);
 	
 	var label2 = control.addChild(new createjs.Text ("Action", "20px Arial", "#000"));
 	label2.x=80;
 	label2.y=30;
 	label2.textAlign="right";
-	label2.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	label2.shadow = new createjs.Shadow("#000", 5, 5, 10);
 	
 	var label3 = control.addChild(new createjs.Text ("Whom", "20px Arial", "#000"));
 	label3.x=80;
 	label3.y=55;
 	label3.textAlign="right";
-	label3.shadow = new createjs.Shadow("#000000", 5, 5, 10);
+	label3.shadow = new createjs.Shadow("#000", 5, 5, 10);
 	
 	var label4 = control.addChild(new createjs.Text ("Material", "20px Arial", "#000"));
 	label4.x=80;
@@ -245,10 +272,12 @@ function showForm(type){
 }
 
 function checkUser() {
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
 	showForm(login);
 }
 
 function showStatistics() {
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
 	showForm(login);
 }
 
@@ -274,6 +303,8 @@ function changeAlpha(){
 }
 
 function infoBox() {
+	var texto;
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
         box= stage.addChild(new createjs.Container());        
         box.name = "box";
         box.x=51;
@@ -285,12 +316,14 @@ function infoBox() {
 	box.background.graphics.beginFill("#CCC").drawRoundRect(0,0,width,height,10);
         box.background.alpha=0.9;
         
-        switch (this.label) {
-                case "How to...":
-                        box.img="./images/about.png";
+        switch (this.txt) {
+                case "howto":
+                        box.img="./images/howto2.png";
+			texto="Manual de instrucciones en desarrollo.";
                         break;
-                case "About":
+                case "about":
                         box.img="./images/about.png";
+			texto="Desarrollado por Roberto García Sánchez\n\n\n Licencia GPLv3.";
                         break;
                 default:
                         box.img="./images/about.png";
@@ -303,7 +336,7 @@ function infoBox() {
         title.x = width/2-100;
 	title.y = 30;
         
-        var text = box.addChild(new createjs.Text(this.txt, "15px Arial", "#000"));
+        var text = box.addChild(new createjs.Text(texto, "15px Arial", "#000"));
         text.x = width/2-100;
 	text.y = 70;
         
@@ -321,6 +354,81 @@ function closeBox(){
         stage.removeChild(stage.getChildByName(this.name));
 }
 
+function drawLifes(){
+	var panel=stage.getChildByName("layerGame").getChildByName("panel1");
+	if (panel.getChildByName("life0")) {
+		for (var i=0;i<lifes;i++) {
+			name="life"+i;
+			panel.getChildByName(name).visible=true;
+		}
+	}
+	else{ 
+		for (var i=0;i<lifes;i++) {
+			var life = panel.addChild(new createjs.Bitmap("./images/heart.png"));
+			life.name="life"+i;
+			life.x=10+(40*i);
+			life.y=8;
+		}
+	}
+}
+
+function loadControls() {
+	var newOptions;
+	newOptions = "<select id=\"select1\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.personal.length;i++){
+			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select2\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.actions.length;i++){
+			newOptions += "<option value=\""+game.actions[i].action+"\">"+game.actions[i].action+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select3\">";
+	newOptions += "<option value=\"null\">-</option>";
+	for(var i=0;i < game.actions.length;i++){
+			newOptions += "<option value=\""+game.actions[i].receptor+"\">"+game.actions[i].receptor+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	newOptions += "<select id=\"select4\">";
+	newOptions += "<option value=\"0\">-</option>";
+	for(var i=0;i < game.actions.length;i++){
+			newOptions += "<option value=\""+game.actions[i].receptor+"\">"+game.actions[i].material+"</option>";		
+	}
+	newOptions += "</select>";
+	
+	$("#controls").html(newOptions);
+	drawControls();
+	
+}
+
+function drawControls(){
+	var select1 = $('#select1').get(0);
+        var panelControl1 = control.addChild(new createjs.DOMElement(select1));
+	panelControl1.x=90;
+	panelControl1.y=90;
+	
+	var select2 = $('#select2').get(0);
+        var panelControl2 = control.addChild(new createjs.DOMElement(select2));
+	panelControl2.x=90;
+	panelControl2.y=115;
+	
+	var select3 = $('#select3').get(0);
+        var panelControl3 = control.addChild(new createjs.DOMElement(select3));
+	panelControl3.x=90;
+	panelControl3.y=140;
+	
+	var select4 = $('#select4').get(0);
+        var panelControl4 = control.addChild(new createjs.DOMElement(select4));
+	panelControl4.x=90;
+	panelControl4.y=165;
+	
+}
 
 function soundChange(){
         if (stage.removeChild(stage.getChildByName("speaker"))){
@@ -357,33 +465,6 @@ function music(){
                 createjs.Sound.play("intro1", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
                 createjs.Sound.setMute(true);//OJO QUITAR
         }
-}
-
-function preLoadGame() {
-	showWarning("Cargando ...");
-	loadGame();
-	setTimeout("startGame();", 2000);
-}
-
-function playGuest() {
-        stage.getChildByName("layerMain").visible=false;
-	preLoadGame();
-}
-
-function startGame() {
-	closeWarning();
-	if(load==1){
-		stage.getChildByName("layerGame").visible=true;
-		createjs.Sound.stop();
-		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
-		//Personaje hablando
-		indexGame=0;
-		play();
-	}
-	else	{
-		alert("Imposible load game");
-		endGame();
-	}
 }
 
 function startChrono(){
@@ -445,8 +526,72 @@ function formatChrono(t,milliseconds){
         return time;
 }
 
+function askGame(){
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
+        var ask = stage.addChild(new createjs.Container());        
+        ask.name = "ask";
+	
+	var bg = ask.addChild(new createjs.Bitmap("./images/bg1.png"));
+	bg.name="bgAsk";
+	
+	ask.background = ask.addChild(new createjs.Shape());
+	ask.background.graphics.beginFill("#CCC").drawRoundRect(canvas.width/2-125,canvas.height/2-100,250,150,10);
+        ask.background.alpha=0.9;
+	
+	
+	var msg = ask.addChild(new createjs.Text("Dupuytren's Contracture", "Italic 15px Arial", "#000"));
+	msg.textAlign = "center";
+        msg.x = canvas.width/2;
+	msg.y = 200;
+	msg.shadow = new createjs.Shadow("#000", 5, 5, 10)
+	msg.on("click",preLoadGame, null, false, {op:'4857'});
+	msg.on("mouseover",alpha);
+        msg.on("mouseout",noalpha);
+	
+	var msg2 = ask.addChild(new createjs.Text("Trigger finger", "Italic 15px Arial", "#000"));
+	msg2.textAlign = "center";
+        msg2.x = canvas.width/2;
+	msg2.y = 250;
+	msg2.shadow = new createjs.Shadow("#000", 5, 5, 10);
+	msg2.on("click",preLoadGame, null, false, {op:'137'});
+	msg2.on("mouseover",alpha);
+        msg2.on("mouseout",noalpha);
+
+}
+
+
+function preLoadGame(evt, data) {
+	stage.removeChild(stage.getChildByName("ask"));
+	showWarning("Cargando ...");
+	loadGame(data.op);
+	setTimeout("startGame();", 3000);
+}
+
+function playGuest() {
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
+        stage.getChildByName("layerMain").visible=false;
+	askGame();
+}
+
+function startGame() {
+	closeWarning();
+	if(load==1){
+		stage.getChildByName("layerGame").visible=true;
+		createjs.Sound.stop();
+		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
+		//Personaje hablando
+		indexGame=0;
+		play();
+	}
+	else	{
+		alert("Imposible load game");
+		endGame();
+	}
+}
+
 function play(){
 	var txt;
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
 	switch (indexGame) {
 		case 0: txt = "Your are going to practice ";
 			txt += game.problema.nombre+".\n"+game.problema.descripcion;
@@ -498,7 +643,7 @@ function play(){
 				}
 			}
 			else
-				txt="No clinical tests..";
+				txt="No treatments..";
 			gameLog.text=(txt);
 			indexGame++;
 			break;
@@ -513,8 +658,11 @@ function play(){
 					
 				}
 			}
-			else
-				txt="No clinical tests..";
+			else {
+				txt="No treatments..";
+				indexGame=10;
+				break;
+			}
 			gameLog.text=(txt);
 			indexGame++;
 			break;
@@ -525,12 +673,13 @@ function play(){
 		
 		case 7:	loadControls();
 			control.visible=true;
+			txt = game.actions[indexAction].etapa;
+			gameLog.text=(txt);
 			stage.getChildByName("layerGame").getChildByName("panel2").getChildByName("bnext").visible=false;
 			startChrono();
-			
 			break;
 		
-		default: alert("siguiente paso");
+		default: endGame();
 	}
 }
 
@@ -547,8 +696,6 @@ function endGame() {
 	drawLifes()
         stopChrono();
         main();
-	createjs.Sound.stop();
-        createjs.Sound.play("intro", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.3);
 }
 
 function morePoints(num){
@@ -573,70 +720,26 @@ function lessPoints(num){
 	stage.getChildByName("layerGame").getChildByName("panel1").getChildByName("log").text=score;
 }
 
-function loadControls() {
-	var newOptions;
-	newOptions = "<select id=\"select1\">";
-	newOptions += "<option value=\"null\">-</option>";
-	for(var i=0;i < game.personal.length;i++){
-			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
-	}
-	newOptions += "</select>";
-	
-	newOptions += "<select id=\"select2\">";
-	newOptions += "<option value=\"null\">-</option>";
-	for(var i=0;i < game.personal.length;i++){
-			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
-	}
-	newOptions += "</select>";
-	
-	newOptions += "<select id=\"select3\">";
-	newOptions += "<option value=\"null\">-</option>";
-	for(var i=0;i < game.personal.length;i++){
-			newOptions += "<option value=\""+game.personal[i]+"\">"+game.personal[i]+"</option>";		
-	}
-	newOptions += "</select>";
-	
-	newOptions += "<select id=\"select4\">";
-	newOptions += "<option value=\"null\">-</option>";
-	for(var i=0;i < game.personal.length;i++){
-			newOptions += "<option value='"+game.personal[i]+"'>"+game.personal[i]+"</option>";		
-	}
-	newOptions += "</select>";
-	
-	$("#controls").html(newOptions);
-	drawControls();
-	
-}
-
-function drawControls(){
-	var select1 = $('#select1').get(0);
-        var panelControl1 = control.addChild(new createjs.DOMElement(select1));
-	panelControl1.x=90;
-	panelControl1.y=90;
-	
-	var select2 = $('#select2').get(0);
-        var panelControl2 = control.addChild(new createjs.DOMElement(select2));
-	panelControl2.x=90;
-	panelControl2.y=115;
-	
-	var select3 = $('#select3').get(0);
-        var panelControl3 = control.addChild(new createjs.DOMElement(select3));
-	panelControl3.x=90;
-	panelControl3.y=140;
-	
-	var select4 = $('#select4').get(0);
-        var panelControl4 = control.addChild(new createjs.DOMElement(select4));
-	panelControl4.x=90;
-	panelControl4.y=165;
-	
-}
 
 function checkAnswer() {
+	var comprobacion=true;
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
 	var txt= $('#select1').val()+ $('#select2').val()+ $('#select3').val()+ $('#select4').val();
-	alert(txt);
 	
-	if (false) {
+	if ($('#select1').val()!=game.actions[indexAction].actor) {
+		comprobacion=false;
+	}
+	if ($('#select2').val()!=game.actions[indexAction].action) {
+		comprobacion=false;
+	}if ($('#select3').val()!=game.actions[indexAction].receptor) {
+		comprobacion=false;
+	}
+	if ($('#select4').val()!=game.actions[indexAction].material) {
+		comprobacion=false;
+	}
+	if (comprobacion) {
 		morePoints();
+		indexAction ++;
 	}
 	else{
 		lessPoints();
@@ -645,27 +748,42 @@ function checkAnswer() {
 		stage.getChildByName("layerGame").getChildByName("panel1").getChildByName(txtlife).visible=false;
 		
 		if (lifes==0) {
-			//gameOver();
+			showScore();
 			endGame();
 		}
 	}
 }
 
-function drawLifes(){
-	var panel=stage.getChildByName("layerGame").getChildByName("panel1");
-	if (panel.getChildByName("life0")) {
-		for (var i=0;i<lifes;i++) {
-			name="life"+i;
-			panel.getChildByName(name).visible=true;
-		}
-	}
-	else{ 
-		for (var i=0;i<lifes;i++) {
-			var life = panel.addChild(new createjs.Bitmap("./images/heart.png"));
-			life.name="life"+i;
-			life.x=10+(40*i);
-			life.y=8;
-		}
-	}
+function showScore(){
+	createjs.Sound.play("click", createjs.Sound.INTERRUPT_ANY,0,0,0,0.5);
+        var ask = stage.addChild(new createjs.Container());        
+        ask.name = "score";
+	ask.on("click",closeScore);
+		
+	ask.background = ask.addChild(new createjs.Shape());
+	ask.background.graphics.beginFill("#202BAA").drawRoundRect(canvas.width/2-125,canvas.height/2-100,250,150,10);
+        ask.background.alpha=0.9;
+	
+	var msg = ask.addChild(new createjs.Text("Score", "Italic 28px Arial", "#fff"));
+	msg.textAlign = "center";
+        msg.x = canvas.width/2;
+	msg.y = 180;
+	msg.shadow = new createjs.Shadow("#000", 5, 5, 10)
+	
+	var msg2 = ask.addChild(new createjs.Text(score, "Italic 26px Arial", "#fff"));
+	msg2.textAlign = "center";
+        msg2.x = canvas.width/2;
+	msg2.y = 220;
+	msg2.shadow = new createjs.Shadow("#000", 5, 5, 10);
+	
+	var msg2 = ask.addChild(new createjs.Text("click to close", "Italic 11px Arial", "#fff"));
+	msg2.textAlign = "center";
+        msg2.x = canvas.width/2;
+	msg2.y = 280;
+	msg2.shadow = new createjs.Shadow("#000", 5, 5, 10);
+	
 }
 
+function closeScore(){
+	stage.removeChild(stage.getChildByName("score"));
+}
