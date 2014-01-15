@@ -176,7 +176,6 @@ function layerGame(){
         log.x= panel1.width-115;
         log.y=9;
 	
-        
         var clock = panel1.addChild(new createjs.Bitmap("./images/clock.png"));
         clock.name="clock";
         clock.x=160;
@@ -186,7 +185,6 @@ function layerGame(){
         chrono.x= 200;
         chrono.y=10;
 	
-        
         var exit = panel1.addChild(new createjs.Bitmap("./images/exit.png"));
         exit.name="clock";
         exit.x=panel1.width-40;
@@ -262,7 +260,7 @@ function showForm(type){
         form.visible=true;
         form.regX = stage.offsetWidth*0.5;
         form.regY = form.offsetHeight*0.5;
-        //move the form above the screen
+       
         form.x = canvas.width * 0.5-120;
         form.y =  -170;
         form.rotation=-360;
@@ -346,7 +344,6 @@ function infoBox() {
 	msg.y = height-20;
 
         box.on("click",closeBox);
-        //stage.update();
 }
 
 
@@ -404,7 +401,6 @@ function loadControls() {
 	
 	$("#controls").html(newOptions);
 	drawControls();
-	
 }
 
 function drawControls(){
@@ -427,7 +423,6 @@ function drawControls(){
         var panelControl4 = control.addChild(new createjs.DOMElement(select4));
 	panelControl4.x=90;
 	panelControl4.y=165;
-	
 }
 
 function soundChange(){
@@ -463,7 +458,6 @@ function music(){
         createjs.Sound.registerManifest(manifest, audioPath);
         function handleLoad(event) {
                 createjs.Sound.play("intro1", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
-                createjs.Sound.setMute(true);//OJO QUITAR
         }
 }
 
@@ -579,7 +573,6 @@ function startGame() {
 		stage.getChildByName("layerGame").visible=true;
 		createjs.Sound.stop();
 		createjs.Sound.play("game", createjs.Sound.INTERRUPT_ANY,0,0,-1,0.5);
-		//Personaje hablando
 		indexGame=0;
 		play();
 	}
