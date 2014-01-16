@@ -558,7 +558,7 @@ function preLoadGame(evt, data) {
 	stage.removeChild(stage.getChildByName("ask"));
 	showWarning("Cargando ...");
 	loadGame(data.op);
-	setTimeout("startGame();", 3000);
+	setTimeout("startGame();", 9000);
 }
 
 function playGuest() {
