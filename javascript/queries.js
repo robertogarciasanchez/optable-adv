@@ -39,7 +39,6 @@ function login(){
                 stage.getChildByName("layerForm").visible=false;
                 registered=true;
                 usuario=data;
-                alert(data);
                 askGame();
                 $("#username").val('username');
                 $("#password").val('password');
